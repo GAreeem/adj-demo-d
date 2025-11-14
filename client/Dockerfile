@@ -1,34 +1,33 @@
+# ---------- STAGE 1: build ----------
 FROM node:20 AS build
 
 WORKDIR /app
 
-#package.log.json, package-lock.json -> /app
+# Archivos de dependencias
 COPY package*.json ./
 
-#funciona para generar EL NODE_MODULES
 RUN npm install
 
-#client/* -> /app/*
+# Copia el código fuente
 COPY . .
 
-#funciona para generar la carpeta /dist
+# 🔹 Variables para Vite (se leen en npm run build)
+ARG VITE_API_HOST
+ARG VITE_API_PORT
+ARG VITE_API_BASE
+
+ENV VITE_API_HOST=${VITE_API_HOST}
+ENV VITE_API_PORT=${VITE_API_PORT}
+ENV VITE_API_BASE=${VITE_API_BASE}
+
+# Genera /dist usando las vars de arriba
 RUN npm run build
 
-#etapa 2 construccion de la imagen
+
+# ---------- STAGE 2: nginx ----------
 FROM nginx:alpine
 
-#Servir todos los recursos generados en la  etapa anterior en la imagen
+# Copia el build estático
 COPY --from=build /app/dist /usr/share/nginx/html
-
-
-ARG API_HOST
-ARG API_PORT
-ARG API_BASE
-
-ENV VITE_API_HOST=$API_HOST
-ENV VITE_API_PORT=$API_PORT
-ENV VITE_API_BASE=$API_BASE
-
-
 
 EXPOSE 80
