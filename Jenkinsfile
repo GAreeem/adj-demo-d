@@ -6,7 +6,7 @@
         stage('Parando los servicios...') {
             steps {
                 bat '''
-                    docker compose -p adj-demo-a down || exit /b 0
+                    docker compose -p adj-demo-main down || exit /b 0
                 '''
             }
         }
