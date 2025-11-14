@@ -15,7 +15,7 @@
         stage('Eliminando imágenes anteriores...') {
             steps {
                 bat '''
-                    for /f "tokens=*" %%i in ('docker images --filter "label=com.docker.compose.project=adj-demo-a" -q') do (
+                    for /f "tokens=*" %%i in ('docker images --filter "label=com.docker.compose.project=adj-demo-main" -q') do (
                         docker rmi -f %%i
                     )
                     if errorlevel 1 (
